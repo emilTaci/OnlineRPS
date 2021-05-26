@@ -1,0 +1,14 @@
+#head{
+    text-align: center;
+    font-size: 3rem;
+    margin: 2rem 0 3.2rem;
+    font-weight: 700;
+}
+/* .second{
+    display: none; ;
+} */
+
+.card{
+    padding: 0;
+    margin: 20px;
+}
