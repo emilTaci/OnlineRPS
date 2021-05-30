@@ -24,7 +24,7 @@ var userGuess2 = {
 var joinRoom;
 var createName;
 var createRoom;
-var thisroom = "testEmil-1"
+var thisroom;
 var player1choice;
 var player2choice;
 
@@ -56,13 +56,14 @@ $(".join").on("click", function(){
         L: 0,
         T: 0,
         guess: null,
-        chat: "Good Luck, Have Fun! :)"
+        chat: "Player 2 connected:)"
     }
     $(".jButtons").prop("disabled", false)
 
     $(".joinName").text(joinName)
-    db.ref(`Rooms/`).once("value", function(snapshot){
-        if(snapshot.hasChild(joinRoom)){
+    db.ref(`Rooms/`).once("value")
+    .then(function(snapshot){
+        if(snapshot.hasChild(joinRoom) && snapshot.child(joinRoom + "/player2/Name").val() == "Waiting..."){
             db.ref(`Rooms/${joinRoom}/player2`).set(
                 userGuess2
             )
@@ -70,12 +71,14 @@ $(".join").on("click", function(){
             $(".welcoming").hide()
             $(".createName").text(snapshot.child(thisroom).val().player1.Name)
             $("#msgSendBtn").addClass("jSendBtn");
+            test(thisroom)
+            $("#msg").html("")
             $(".second").show()
         }else{
-            alert("there is no room like that")
+            alert("there is no room like that or room is full")
         }
     })
-    test(thisroom)
+
 
 })
 
@@ -94,23 +97,34 @@ $(".create").on("click", function(){
 
     $(".cButtons").prop("disabled", false)
 
-    db.ref(`Rooms/${createRoom}/player1`).set(
-        userGuess1
-    )
-    db.ref(`Rooms/${createRoom}/player2`).set(
-        userGuess2
-    )
-    thisroom = createRoom
-    $(".welcoming").hide()
-    db.ref(`Rooms/${thisroom}`).on("value",function(snapshot){
-        $(".joinName").text(snapshot.val().player2.Name)
-        $(".createName").text(snapshot.val().player1.Name)
-    })
-    $("#msgSendBtn").addClass("cSendBtn");
-    test(thisroom)
-    $(".second").show()
+    db.ref(`Rooms/`).once("value")
+    .then(function(snapshot){
+        if(snapshot.child(createRoom).exists()){
+            alert('Room with this name already exists ,please use another name')
+        }else{
+
+            db.ref(`Rooms/${createRoom}/player1`).set(
+                userGuess1
+            )
+            db.ref(`Rooms/${createRoom}/player2`).set(
+                userGuess2
+            )
+
+            thisroom = createRoom
+            $(".welcoming").hide()
+            db.ref(`Rooms/${thisroom}`).on("value",function(snapshot){
+                $(".joinName").text(snapshot.val().player2.Name)
+                $(".createName").text(snapshot.val().player1.Name)
+            })
+            $("#msgSendBtn").addClass("cSendBtn");
+            test(thisroom)
+            $("#msg").html("")
+            $(".second").show()
+        }
 
 })
+})
+
 
 $(".jButtons").on("click", function(){
     var player2Guess = $(this).attr("value")
@@ -133,7 +147,9 @@ $(".cButtons").on("click", function(){
 })
 
 db.ref(`Rooms/`).on("value",function(snapshot){
+    if(thisroom){
     callFB(thisroom)
+    }
 })
 
 function callFB(room){
