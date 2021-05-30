@@ -10,5 +10,14 @@
 
 .card{
     padding: 0;
-    margin: 20px;
+    margin: 30px;
+}
+.chat{
+    font-size: 10px;
+    margin: 0 2px 2px 0;
+    padding: 0;
+}
+#msg{
+    max-height: 180px;
+    overflow: auto;
 }

@@ -24,7 +24,7 @@ var userGuess2 = {
 var joinRoom;
 var createName;
 var createRoom;
-var thisroom = "test"
+var thisroom = "testEmil-1"
 var player1choice;
 var player2choice;
 
@@ -69,11 +69,13 @@ $(".join").on("click", function(){
             thisroom = joinRoom
             $(".welcoming").hide()
             $(".createName").text(snapshot.child(thisroom).val().player1.Name)
+            $("#msgSendBtn").addClass("jSendBtn");
             $(".second").show()
         }else{
             alert("there is no room like that")
         }
     })
+    test(thisroom)
 
 })
 
@@ -104,6 +106,8 @@ $(".create").on("click", function(){
         $(".joinName").text(snapshot.val().player2.Name)
         $(".createName").text(snapshot.val().player1.Name)
     })
+    $("#msgSendBtn").addClass("cSendBtn");
+    test(thisroom)
     $(".second").show()
 
 })
@@ -133,7 +137,7 @@ db.ref(`Rooms/`).on("value",function(snapshot){
 })
 
 function callFB(room){
-db.ref(`Rooms/${room}`).once("value",function(snapshot){
+db.ref(`Rooms/${room}`).once("value", function(snapshot){
 
     $("#cw").text(snapshot.child("player1").val().W)
     $("#cl").text(snapshot.child("player1").val().L)
@@ -178,7 +182,7 @@ function playerOneWon(){
         guess: "null"
     })
     db.ref("Rooms/"+ thisroom + "/player2").update({
-      guess: "null"
+        guess: "null"
     })
 }
 
@@ -194,7 +198,7 @@ function playerTwoWon(){
         guess: "null"
     })
     db.ref("Rooms/"+ thisroom + "/player2").update({
-      guess: "null"
+        guess: "null"
     })
 }
 
@@ -226,5 +230,50 @@ if (player1choice === "Rock" && player2choice === "Rock") {
   else if (player1choice === "Scissors" && player2choice === "Paper") {
     playerOneWon();
   }
-
 }
+
+function test(room){
+db.ref(`Rooms/${room}/player1/chat`).on("value", function(snapshot){
+    $("#msg").append(`<p class="chat">Player-1: ${snapshot.val()}</p>`)
+
+})
+
+db.ref(`Rooms/${room}/player2/chat`).on("value", function(snapshot){
+    $("#msg").append(`<p style="color:red" class="chat">Player-2: ${snapshot.val()}</p>`)
+})
+}
+
+$(document).on("click", ".jSendBtn", function(){
+    var msg = $("#msgValue").val()
+    db.ref("Rooms/"+ thisroom + "/player2").update({
+        chat: msg
+    })
+    $("#msgValue").val("")
+})
+
+$(document).on("click", ".cSendBtn", function(){
+    var msg = $("#msgValue").val()
+    db.ref("Rooms/"+ thisroom + "/player1").update({
+        chat: msg
+    })
+    $("#msgValue").val("")
+})
+
+
+// function player1typed(room){
+//     db.ref(`Rooms/${room}/player1`).once("value", function(snapshot){
+//         var n = snapshot.val().Name
+//         var m = snapshot.val().chat
+//         $("#msg").append(`<p style="background-color:#ffffff">${n}: ${m}</p>`)
+//     })
+// }
+
+// function player2typed(room){
+//     db.ref(`Rooms/${room}/player2`).once("value", function(snapshot){
+//         var n = snapshot.val().Name
+//         var m = snapshot.val().chat
+//         $("#msg").append(`<p>${n}: ${m}</p>`)
+//     })
+// }
+
+
