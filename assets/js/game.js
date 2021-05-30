@@ -71,7 +71,7 @@ $(".join").on("click", function(){
             $(".welcoming").hide()
             $(".createName").text(snapshot.child(thisroom).val().player1.Name)
             $("#msgSendBtn").addClass("jSendBtn");
-            test(thisroom)
+            runMsgRead(thisroom)
             $("#msg").html("")
             $(".second").show()
         }else{
@@ -117,7 +117,7 @@ $(".create").on("click", function(){
                 $(".createName").text(snapshot.val().player1.Name)
             })
             $("#msgSendBtn").addClass("cSendBtn");
-            test(thisroom)
+            runMsgRead(thisroom)
             $("#msg").html("")
             $(".second").show()
         }
@@ -248,14 +248,15 @@ if (player1choice === "Rock" && player2choice === "Rock") {
   }
 }
 
-function test(room){
+function runMsgRead(room){
 db.ref(`Rooms/${room}/player1/chat`).on("value", function(snapshot){
     $("#msg").append(`<p class="chat">Player-1: ${snapshot.val()}</p>`)
-
+    updateScroll()
 })
 
 db.ref(`Rooms/${room}/player2/chat`).on("value", function(snapshot){
     $("#msg").append(`<p style="color:red" class="chat">Player-2: ${snapshot.val()}</p>`)
+    updateScroll()
 })
 }
 
@@ -274,6 +275,11 @@ $(document).on("click", ".cSendBtn", function(){
     })
     $("#msgValue").val("")
 })
+
+function updateScroll(){
+    var element = document.getElementById("msg");
+    element.scrollTop = element.scrollHeight;
+}
 
 
 // function player1typed(room){

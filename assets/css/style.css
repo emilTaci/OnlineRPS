@@ -17,6 +17,9 @@
     margin: 0 2px 2px 0;
     padding: 0;
 }
+/* #msg p:last-child {
+    height: 100%;
+} */
 #msg{
     max-height: 180px;
     overflow: auto;
