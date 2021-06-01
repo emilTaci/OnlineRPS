@@ -153,19 +153,29 @@ db.ref(`Rooms/`).on("value",function(snapshot){
 })
 
 function callFB(room){
-db.ref(`Rooms/${room}`).once("value", function(snapshot){
+    db.ref(`Rooms/${room}`).once("value", function(snapshot){
 
-    $("#cw").text(snapshot.child("player1").val().W)
-    $("#cl").text(snapshot.child("player1").val().L)
-    $("#ct").text(snapshot.child("player1").val().T)
+        if(snapshot.child("player1").val().W > $("#cw").text()){
+            $("#msg").append(`<p class="chat">${snapshot.child("player1").val().Name} Wins</p>`)
+        }
 
-    $("#jw").text(snapshot.child("player2").val().W)
-    $("#jl").text(snapshot.child("player2").val().L)
-    $("#jt").text(snapshot.child("player2").val().T)
+        $("#cw").text(snapshot.child("player1").val().W)
+        $("#cl").text(snapshot.child("player1").val().L)
+        $("#ct").text(snapshot.child("player1").val().T)
+       
+        if(snapshot.child("player2").val().W > $("#jw").text()){
+            $("#msg").append(`<p style="color:red" class="chat">${snapshot.child("player2").val().Name} Wins</p>`)
+        }
+        $("#jw").text(snapshot.child("player2").val().W)
+        $("#jl").text(snapshot.child("player2").val().L)
+        if(snapshot.child("player2").val().T > $("#jt").text()){
+            $("#msg").append(`<p class="chat">That's a tie!</p>`)
+        }
+        $("#jt").text(snapshot.child("player2").val().T)
 
-    player1choice = snapshot.child("player1").val().guess
-    player2choice = snapshot.child("player2").val().guess
-})
+        player1choice = snapshot.child("player1").val().guess
+        player2choice = snapshot.child("player2").val().guess
+    })
 }
 
 
